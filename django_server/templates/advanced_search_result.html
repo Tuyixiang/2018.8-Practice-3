@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<title>“{{search_text}}”的搜索结果</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{% load static %}
+<script src="{% static 'js/jquery.min.js' %}" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="{% static 'css/w3.css' %}">
+<link rel="stylesheet" href="{% static 'css/w3-theme-black.css' %}">
+<style>
+.w3-sidebar {
+  z-index: 3;
+  width: 250px;
+  top: 43px;
+  bottom: 0;
+  height: inherit;
+}
+.main {
+  width: 80%;
+  max-width: 600px;
+  margin: 10% auto;
+  margin-top: 0%;
+  margin-bottom: 5%;
+  padding-top: 50px;
+}
+</style>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-theme w3-top w3-large w3-center" style="margin: 0 auto; text-align: center">
+    <a href="/browse/1" class="w3-bar-item w3-button w3-hover-white">目录</a>
+    <a href="/search" class="w3-bar-item w3-button w3-hover-white">搜索</a>
+    <a href="/advanced_search" class="w3-bar-item w3-button w3-theme-l1">高级搜索</a>
+    <a href="/random" class="w3-bar-item w3-button w3-hover-white">随机页面</a>
+    <a class="w3-bar-item w3-button w3-hover-white">查看</a>
+  </div>
+</div>
+
+<!-- Sidebar
+<nav class="w3-sidebar w3-bar-block w3-collapse w3-large w3-theme-l5 w3-animate-left" id="mySidebar">
+  <a href="javascript:void(0)" onclick="w3_close()" class="w3-right w3-xlarge w3-padding-large w3-hover-black w3-hide-large" title="Close Menu">
+    <i class="fa fa-remove"></i>
+  </a>
+  <h4 class="w3-bar-item"><b>Menu</b></h4>
+  <a class="w3-bar-item w3-button w3-hover-black" href="#">Link</a>
+  <a class="w3-bar-item w3-button w3-hover-black" href="#">Link</a>
+  <a class="w3-bar-item w3-button w3-hover-black" href="#">Link</a>
+  <a class="w3-bar-item w3-button w3-hover-black" href="#">Link</a>
+</nav>
+-->
+
+<!-- Main content: shift it to the right by 250 pixels when the sidebar is visible -->
+<div class="main">
+
+  <div style="text-align: center">
+    <img src="{% static '/img/logo.png' %}" style="width: 300px; margin-top: 10%; margin-bottom: 5%">
+  </div>
+  <div style="display: flex; margin-bottom: 3%">
+    <button class="w3-button w3-block w3-light-gray w3-hover-light-gray" style="width: 20%; outline: none !important">起始日期</button>
+    <input id="startdate" type="date" style="width: 30%; text-align: right">
+      <button class="w3-button w3-block w3-light-gray w3-hover-light-gray" style="width: 20%; outline: none !important">结束日期</button>
+      <input id="enddate" type="date" style="width: 30%; text-align: right">
+  </div>
+  <div style="display: flex; margin-bottom: 5%">
+  <input class="w3-input w3-border my-input" style="outline: none !important" placeholder="请输入关键字" id="textbox">
+  <button class="w3-button w3-block w3-gray" style="width: 20%; outline: none !important" onclick="search()" id="searchbutton">搜索</button>
+  </div>
+
+  {% for entry in data %}
+  <div class="w3-row">
+    <h2 class="w3-text-dark-gray w3-hover-text-gray" style="margin-bottom:0"><a href="/page/{{entry.id}}" class="text">
+      {{ entry.title }}</a></h2>
+    <p style="color:#999; line-height: 0">{{entry.category}}&nbsp;&nbsp;&nbsp;{{entry.publishdate}}</p>
+    <p class="text">{{ entry.description }}……</p>
+  </div>
+  {% endfor %}
+
+  <div id="message"></div>
+
+  <!-- Pagination -->
+  <div class="w3-center w3-padding-32">
+    <div class="w3-bar" id="pages">
+      <a class="w3-button w3-black" href="#">1</a>
+      <a class="w3-button w3-hover-black" href="#">2</a>
+      <a class="w3-button w3-hover-black" href="#">3</a>
+      <a class="w3-button w3-hover-black" href="#">4</a>
+      <a class="w3-button w3-hover-black" href="#">5</a>
+      <a class="w3-button w3-hover-black" href="#">&raquo;</a>
+    </div>
+  </div>
+
+
+<!-- END MAIN -->
+</div>
+
+<script>
+  $(document).ready(function() {
+    $("#startdate").val("{{startdate}}");
+    $("#enddate").val("{{enddate}}");
+
+
+    // render pagination
+    var page = {{page}};
+    var totalPage = {{total_page}};
+    var html = "";
+    var min = page - 2;
+    if (min <= 0) {
+      min = 1;
+    } else if (min + 4 > totalPage) {
+      min = totalPage - 4;
+    }
+    if (min >= 2) {
+      html += "<a class=\"w3-button w3-hover-black\" href=\"1\">1</a>";
+      html += "<a class=\"w3-button w3-hover-none\">...</a>";
+    }
+    for (var i = min; i <= min + 4; i++) {
+      if (i == page) {
+        html += "<a class=\"w3-button w3-black\">" + i + "</a>"
+      } else if (i >= 1 && i <= totalPage) {
+        html += "<a class=\"w3-button w3-hover-black\" href=\"" + i + "\">" + i + "</a>";
+      }
+    }
+    if (min <= totalPage - 5) {
+      html += "<a class=\"w3-button w3-hover-none\">...</a>";
+      html += "<a class=\"w3-button w3-hover-black\" href=\"" + totalPage + "\">" + totalPage + "</a>";
+    }
+    $("#pages").html(html);
+
+    var ns_time = {{ time }};
+    $("#time").html("" + ns_time / 1000000000);
+
+    // highlight keywords
+    var keywords = {{keywords|safe}};
+    for (var i in keywords) {
+      $(".text").each(function() {
+        console.log($(this).html());
+        $(this).html($(this).html().replace(keywords[i], "<a style=\"color:#91484f\">" + keywords[i] + "</a>"));
+      });
+    }
+    $("#textbox").val("{{search_text}}");
+
+    if (!totalPage) {
+      $("#message").html("<p style=\"line-height:3; font-size:20px\">很抱歉，没有找到与“{{search_text}}”相关的网页。</p><p>温馨提示：</p>" +
+                          "<ul><li>请检查您的输入是否正确</li>" +
+                          "<li>如网页未收录或者新站未收录，请提交网址给我们</li>" +
+                          "<li>如有任何意见或建议，请及时反馈给我们</li></ul>");
+    }
+  });
+  var search = function() {
+    var startdate = document.getElementById("startdate").value;
+    var enddate = document.getElementById("enddate").value;
+    var text = document.getElementById("textbox").value;
+    if (startdate > enddate) {
+      alert("日期输入有误");
+      return;
+    }
+    if (!text) {
+      alert("请输入搜索关键词");
+      return
+    }
+    location = "/search/" + text + "/" + startdate + "/" + enddate + "/1";
+  };
+
+  // submit on enter keywords
+  document.getElementById("textbox").addEventListener("keyup", function(event) {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+      // Trigger the button element with a click
+      document.getElementById("searchbutton").click();
+    }
+  });
+</script>
+
+<footer class="w3-bottom">
+  <div class="w3-container w3-theme-l1">
+    <p>共{{results}}条结果，搜索用时：<a id="time"></a>s</p>
+  </div>
+</footer>
+
+</body>
+</html>

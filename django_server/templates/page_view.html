@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<title>{{ title }}--{{ category }}--人民网</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{% load static %}
+<script src="{% static 'js/jquery.min.js' %}" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="{% static 'css/w3.css' %}">
+<link rel="stylesheet" href="{% static 'css/w3-theme-black.css' %}">
+<style>
+.w3-sidebar {
+  z-index: 3;
+  width: 250px;
+  top: 43px;
+  bottom: 0;
+  height: inherit;
+}
+.main {
+  width: 80%;
+  max-width: 600px;
+  margin: 10% auto;
+  margin-top: 0%;
+  margin-bottom: 5%;
+  padding-top: 50px;
+}
+</style>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-theme w3-top w3-large w3-center" style="margin: 0 auto; text-align: center">
+    <a href="/browse/1" class="w3-bar-item w3-button w3-hover-white">目录</a>
+    <a href="/search" class="w3-bar-item w3-button w3-hover-white">搜索</a>
+    <a href="/advanced_search" class="w3-bar-item w3-button w3-hover-white">高级搜索</a>
+    <a href="/random" class="w3-bar-item w3-button w3-hover-white">随机页面</a>
+    <a class="w3-bar-item w3-button w3-theme-l1">查看</a>
+  </div>
+</div>
+
+
+<!-- Main content: shift it to the right by 250 pixels when the sidebar is visible -->
+<div class="main">
+
+  <h2 class="w3-text-dark-gray" style="margin-bottom:0">
+    {{ title }}</h2>
+  <p style="color:#999; line-height: 0">{{category}}&nbsp;&nbsp;&nbsp;人民网&nbsp;&nbsp;&nbsp;{{publishdate}}</p>
+  <br>
+  <p id="content"></p>
+  <br><br>
+  {% if recommend %}
+    <h3>相关文章：</h3>
+    {% for entry in recommend %}
+      <div class="w3-row">
+        <h4 class="w3-text-dark-gray w3-hover-text-gray" style="margin-bottom:0"><a href="/page/{{entry.id}}" class="text">
+          {{ entry.title }}</a></h4>
+        <p style="color:#999; line-height: 0">{{entry.category}}&nbsp;&nbsp;&nbsp;{{entry.publishdate}}</p>
+        <p class="text">{{ entry.description }}……</p>
+      </div>
+    {% endfor %}
+  {% else %}
+    <h5>无相关文章推荐</h5>
+  {% endif %}
+  <br>
+
+<!-- END MAIN -->
+</div>
+
+
+
+
+<!-- END MAIN -->
+</div>
+
+<script>
+  $(document).ready(function() {
+    var content = "{{ content|safe }}".replace(/<br>/g, "<br><br>").replace(/<strong>/g, "<br><strong>");
+    $("#content").html(content);
+  });
+</script>
+
+<footer id="myFooter" class="w3-bottom">
+  <div class="w3-container w3-theme-l1">
+    <p><a href="{{source}}">查看原网页</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

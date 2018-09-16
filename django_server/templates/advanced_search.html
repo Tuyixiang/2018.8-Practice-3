@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<title>PEOPLE ONCE YOU KNOW</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{% load static %}
+<script src="{% static 'js/jquery.min.js' %}" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="{% static 'css/w3.css' %}">
+<link rel="stylesheet" href="{% static 'css/w3-theme-black.css' %}">
+<style>
+.w3-sidebar {
+  z-index: 3;
+  width: 250px;
+  top: 43px;
+  bottom: 0;
+  height: inherit;
+}
+</style>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-theme w3-top w3-large w3-center" style="margin: 0 auto; text-align: center">
+    <a href="/browse/1" class="w3-bar-item w3-button w3-hover-white">目录</a>
+    <a href="/search" class="w3-bar-item w3-button w3-hover-white">搜索</a>
+    <a class="w3-bar-item w3-button w3-theme-l1">高级搜索</a>
+    <a href="/random" class="w3-bar-item w3-button w3-hover-white">随机页面</a>
+    <a class="w3-bar-item w3-button w3-hover-white">查看</a>
+  </div>
+</div>
+
+<!-- Sidebar
+<nav class="w3-sidebar w3-bar-block w3-collapse w3-large w3-theme-l5 w3-animate-left" id="mySidebar">
+  <a href="javascript:void(0)" onclick="w3_close()" class="w3-right w3-xlarge w3-padding-large w3-hover-black w3-hide-large" title="Close Menu">
+    <i class="fa fa-remove"></i>
+  </a>
+  <h4 class="w3-bar-item"><b>Menu</b></h4>
+  <a class="w3-bar-item w3-button w3-hover-black" href="#">Link</a>
+  <a class="w3-bar-item w3-button w3-hover-black" href="#">Link</a>
+  <a class="w3-bar-item w3-button w3-hover-black" href="#">Link</a>
+  <a class="w3-bar-item w3-button w3-hover-black" href="#">Link</a>
+</nav>
+-->
+
+<!-- Main content: shift it to the right by 250 pixels when the sidebar is visible -->
+<div style="width: 80%; max-width: 600px; margin: 10% auto; margin-top: 15%; text-align: center">
+
+<img src="{% static '/img/logo.png' %}" style="width: 300px; margin-bottom: 5%">
+<div style="display: flex; margin-bottom: 3%">
+  <button class="w3-button w3-block w3-light-gray w3-hover-light-gray" style="width: 20%; outline: none !important">起始日期</button>
+  <input id="startdate" type="date" style="width: 30%; text-align: right">
+    <button class="w3-button w3-block w3-light-gray w3-hover-light-gray" style="width: 20%; outline: none !important">结束日期</button>
+    <input id="enddate" type="date" style="width: 30%; text-align: right">
+</div>
+<div style="display: flex">
+<input class="w3-input w3-border my-input" style="outline: none !important" placeholder="请输入关键词" id="textbox">
+<button class="w3-button w3-block w3-gray" style="width: 20%; outline: none !important" onclick="search()" id="searchbutton">搜索</button>
+</div>
+
+
+
+<!-- END MAIN -->
+</div>
+
+<script>
+  var search = function() {
+    var startdate = document.getElementById("startdate").value;
+    var enddate = document.getElementById("enddate").value;
+    var text = document.getElementById("textbox").value;
+    if (startdate > enddate) {
+      alert("日期输入有误");
+      return;
+    }
+    if (!text) {
+      alert("请输入搜索关键词");
+      return
+    }
+    location = "/search/" + text + "/" + startdate + "/" + enddate + "/1";
+  };
+  // submit on enter keywords
+  document.getElementById("textbox").addEventListener("keyup", function(event) {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+      // Trigger the button element with a click
+      document.getElementById("searchbutton").click();
+    }
+  });
+</script>
+
+<footer id="myFooter" class="w3-bottom">
+  <div class="w3-container w3-theme-l1">
+    <p>共收录人民网{{total}}篇文章</p>
+  </div>
+</footer>
+
+</body>
+</html>
